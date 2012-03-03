@@ -14,30 +14,27 @@
  *    limitations under the License.
  */
 
-package org.jmatch.rules;
+package org.jmatch.predicates;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import org.jmatch.Selector;
 
 /**
  * @author Roman Kashitsyn
  */
-public class FuncRule<I, O> extends AbstractRule<I, O> {
+public class NotSelector<E> extends AbstractSelector<E> {
     
-    private final Function<I, O> func;
+    private final Selector<E> selector;
     
-    public FuncRule(Predicate<? super I> predicate, Function<I, O> func) {
-        super(predicate);
-        this.func = func;
+    public NotSelector(Selector<E> selector) {
+        this.selector = selector;
     }
     
-    @Override protected O getValue(I input) {
-        return func.apply(input);
-    }
-    
-    @Override public String toString() {
-        return "{" + getPredicate() + " -> " + func + "}";
+    public boolean matches(E e) {
+        return !selector.matches(e);
     }
 
+    @Override
+    public String toString() {
+        return "not[" + selector.toString() + "]";
+    }
 }

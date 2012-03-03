@@ -14,30 +14,30 @@
  *    limitations under the License.
  */
 
-package org.jmatch.rules;
+package org.jmatch.predicates.strings;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import org.jmatch.Selector;
+import org.jmatch.predicates.AbstractSelector;
+
+import java.util.regex.Pattern;
 
 /**
  * @author Roman Kashitsyn
  */
-public class FuncRule<I, O> extends AbstractRule<I, O> {
-    
-    private final Function<I, O> func;
-    
-    public FuncRule(Predicate<? super I> predicate, Function<I, O> func) {
-        super(predicate);
-        this.func = func;
-    }
-    
-    @Override protected O getValue(I input) {
-        return func.apply(input);
-    }
-    
-    @Override public String toString() {
-        return "{" + getPredicate() + " -> " + func + "}";
+public class MatchesPatternSelector extends AbstractSelector<CharSequence> {
+
+    private final Pattern pattern;
+
+    public MatchesPatternSelector(Pattern pattern) {
+        this.pattern = pattern;
     }
 
+
+    public boolean matches(CharSequence s) {
+        return pattern.matcher(s).matches();
+    }
+    
+    @Override
+    public String toString() {
+        return "matchesPattern(" + pattern.toString() + ")";
+    }
 }

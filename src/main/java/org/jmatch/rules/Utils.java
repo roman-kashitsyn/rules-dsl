@@ -16,28 +16,27 @@
 
 package org.jmatch.rules;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import org.jmatch.Selector;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
+
+import java.util.concurrent.Callable;
 
 /**
  * @author Roman Kashitsyn
  */
-public class FuncRule<I, O> extends AbstractRule<I, O> {
-    
-    private final Function<I, O> func;
-    
-    public FuncRule(Predicate<? super I> predicate, Function<I, O> func) {
-        super(predicate);
-        this.func = func;
-    }
-    
-    @Override protected O getValue(I input) {
-        return func.apply(input);
-    }
-    
-    @Override public String toString() {
-        return "{" + getPredicate() + " -> " + func + "}";
-    }
+public class Utils {
 
+    private Utils() {}
+
+    public static <T> Supplier<T> asSupplier(final Callable<T> callable) {
+        return new Supplier<T>() {
+            public T get() {
+                try {
+                    return callable.call();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        };
+    }
 }

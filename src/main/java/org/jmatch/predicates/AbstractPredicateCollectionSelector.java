@@ -14,30 +14,22 @@
  *    limitations under the License.
  */
 
-package org.jmatch.rules;
+package org.jmatch.predicates;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import org.jmatch.Selector;
 
 /**
  * @author Roman Kashitsyn
  */
-public class FuncRule<I, O> extends AbstractRule<I, O> {
-    
-    private final Function<I, O> func;
-    
-    public FuncRule(Predicate<? super I> predicate, Function<I, O> func) {
-        super(predicate);
-        this.func = func;
-    }
-    
-    @Override protected O getValue(I input) {
-        return func.apply(input);
-    }
-    
-    @Override public String toString() {
-        return "{" + getPredicate() + " -> " + func + "}";
+public abstract class AbstractPredicateCollectionSelector<T> extends AbstractSelector<T> {
+
+    private final Iterable<? extends Predicate<? super T>> predicates;
+
+    protected AbstractPredicateCollectionSelector(Iterable<? extends Predicate<? super T>> predicates) {
+        this.predicates = predicates;
     }
 
+    protected Iterable<? extends Predicate<? super T>> predicates() {
+        return predicates;
+    }
 }

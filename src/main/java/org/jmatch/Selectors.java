@@ -1,9 +1,26 @@
+/*
+ * Copyright 2012 Roman Kashitsyn
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
 package org.jmatch;
 
-import org.jmatch.selectors.*;
+import org.jmatch.predicates.*;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import static com.google.common.collect.Lists.newArrayListWithExpectedSize;
 
 /**
  * @author Roman Kashitsyn
@@ -13,7 +30,7 @@ public class Selectors {
 
     private Selectors() {}
 
-    /* Stateless selectors */
+    /* Stateless predicates */
 
     public static <T> Selector<T> is(Selector<T> s) {
         return s;
@@ -35,7 +52,7 @@ public class Selectors {
         return new EqualToSelector(o);
     }
 
-    /* Logical selectors */
+    /* Logical predicates */
     
     public static <T> Selector<T> not(Selector<T> selector) {
         return new NotSelector<T>(selector);
@@ -46,10 +63,10 @@ public class Selectors {
     }
 
     public static <T> Selector<T> allOf(Selector<? super T> s1, Selector<? super T> s2) {
-        List<Selector<? super T>> selectors = new ArrayList<Selector<? super T>>(2);
+        List<Selector<? super T>> selectors = newArrayListWithExpectedSize(2);
         selectors.add(s1);
         selectors.add(s2);
-        return new AllOfSelector<T>(selectors);
+        return allOf(selectors);
     }
 
     public static <T> Selector<T> anyOf(Iterable<Selector<? super T>> selectors) {
@@ -57,9 +74,20 @@ public class Selectors {
     }
 
     public static <T> Selector<T> anyOf(Selector<? super T> s1, Selector<? super T> s2) {
-        List<Selector<? super T>> selectors = new ArrayList<Selector<? super T>>(2);
+        List<Selector<? super T>> selectors = newArrayListWithExpectedSize(2);
         selectors.add(s1);
         selectors.add(s2);
-        return new AnyOfSelector<T>(selectors);
+        return anyOf(selectors);
+    }
+    
+    public static <T> Selector<T> nonOf(Iterable<? extends Selector<? super T>> selectors) {
+        return new NonOfSelector<T>(selectors);
+    }
+    
+    public static <T> Selector<T> nonOf(Selector<? super T> s1, Selector<? super T> s2) {
+        List<Selector<? super T>> selectors = newArrayListWithExpectedSize(2);
+        selectors.add(s1);
+        selectors.add(s2);
+        return nonOf(selectors);
     }
 }

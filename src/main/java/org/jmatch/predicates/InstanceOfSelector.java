@@ -14,30 +14,24 @@
  *    limitations under the License.
  */
 
-package org.jmatch.rules;
-
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import org.jmatch.Selector;
+package org.jmatch.predicates;
 
 /**
  * @author Roman Kashitsyn
  */
-public class FuncRule<I, O> extends AbstractRule<I, O> {
+public class InstanceOfSelector extends AbstractSelector<Object> {
     
-    private final Function<I, O> func;
+    private final Class<?> clazz;
     
-    public FuncRule(Predicate<? super I> predicate, Function<I, O> func) {
-        super(predicate);
-        this.func = func;
+    public InstanceOfSelector(Class<?> clazz) {
+        this.clazz = clazz;
     }
     
-    @Override protected O getValue(I input) {
-        return func.apply(input);
+    public boolean matches(Object o) {
+        return clazz.isInstance(o);
     }
     
     @Override public String toString() {
-        return "{" + getPredicate() + " -> " + func + "}";
+        return "instanceOf(" + clazz.getSimpleName() + ")";
     }
-
 }

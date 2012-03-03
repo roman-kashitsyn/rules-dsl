@@ -14,30 +14,29 @@
  *    limitations under the License.
  */
 
-package org.jmatch.rules;
+package org.jmatch.predicates.comparables;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import org.jmatch.Selector;
+import org.jmatch.predicates.AbstractSelector;
 
 /**
  * @author Roman Kashitsyn
  */
-public class FuncRule<I, O> extends AbstractRule<I, O> {
+public class BetweenSelector<T extends Comparable<? super T>> extends AbstractSelector<T> {
     
-    private final Function<I, O> func;
+    private final T lowerBound;
+    private final T upperBound;
     
-    public FuncRule(Predicate<? super I> predicate, Function<I, O> func) {
-        super(predicate);
-        this.func = func;
+    public BetweenSelector(T lowerBound, T upperBound) {
+        this.lowerBound = lowerBound;
+        this.upperBound = upperBound;
     }
     
-    @Override protected O getValue(I input) {
-        return func.apply(input);
+    public boolean matches(T t) {
+        return t != null && lowerBound.compareTo(t) <= 0 && upperBound.compareTo(t) >= 0;
     }
     
-    @Override public String toString() {
-        return "{" + getPredicate() + " -> " + func + "}";
+    @Override
+    public String toString() {
+        return "between(" + lowerBound + ", " + upperBound + ")";
     }
-
 }

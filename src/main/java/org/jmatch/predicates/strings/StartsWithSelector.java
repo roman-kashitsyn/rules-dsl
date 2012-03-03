@@ -14,30 +14,27 @@
  *    limitations under the License.
  */
 
-package org.jmatch.rules;
+package org.jmatch.predicates.strings;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import org.jmatch.Selector;
+import org.jmatch.predicates.AbstractSelector;
 
 /**
  * @author Roman Kashitsyn
  */
-public class FuncRule<I, O> extends AbstractRule<I, O> {
+public class StartsWithSelector extends AbstractSelector<String> {
     
-    private final Function<I, O> func;
+    private final String prefix;
     
-    public FuncRule(Predicate<? super I> predicate, Function<I, O> func) {
-        super(predicate);
-        this.func = func;
+    public StartsWithSelector(String prefix) {
+        this.prefix = prefix;
     }
     
-    @Override protected O getValue(I input) {
-        return func.apply(input);
+    public boolean matches(String s) {
+        return s.startsWith(prefix); 
     }
     
-    @Override public String toString() {
-        return "{" + getPredicate() + " -> " + func + "}";
+    @Override
+    public String toString() {
+        return "startsWith(" + prefix + ")";
     }
-
 }

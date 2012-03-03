@@ -14,30 +14,34 @@
  *    limitations under the License.
  */
 
-package org.jmatch.rules;
+package org.jmatch.predicates;
 
-import com.google.common.base.Function;
+import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import org.jmatch.Selector;
 
 /**
  * @author Roman Kashitsyn
  */
-public class FuncRule<I, O> extends AbstractRule<I, O> {
+public class AnyOfSelector<E> extends AbstractPredicateCollectionSelector<E> {
     
-    private final Function<I, O> func;
-    
-    public FuncRule(Predicate<? super I> predicate, Function<I, O> func) {
-        super(predicate);
-        this.func = func;
+    public AnyOfSelector(Iterable<? extends Predicate<? super E>> predicates) {
+        super(predicates);
     }
     
-    @Override protected O getValue(I input) {
-        return func.apply(input);
+    public boolean matches(E e) {
+        for (Predicate<? super E> selector : predicates()) {
+            if (selector.apply(e)) {
+                return true;
+            }
+        }
+        return false;
     }
     
-    @Override public String toString() {
-        return "{" + getPredicate() + " -> " + func + "}";
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder("anyOf[");
+        Joiner.on(", ").appendTo(builder, predicates());
+        return builder.append("]").toString();
     }
-
 }
