@@ -24,9 +24,9 @@ import com.google.common.base.Predicate;
  */
 public class FuncRule<I, O> extends AbstractRule<I, O> {
     
-    private final Function<I, O> func;
+    private final Function<? super I, ? extends O> func;
     
-    public FuncRule(Predicate<? super I> predicate, Function<I, O> func) {
+    public FuncRule(Predicate<? super I> predicate, Function<? super I, ? extends O> func) {
         super(predicate);
         this.func = func;
     }

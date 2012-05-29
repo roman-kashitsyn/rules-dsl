@@ -16,6 +16,8 @@
 
 package org.rulesdsl;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import org.rulesdsl.predicates.*;
 
 import java.util.List;
@@ -27,6 +29,20 @@ import static com.google.common.collect.Lists.newArrayListWithExpectedSize;
  * @since 1.0
  */
 public class Selectors {
+
+    public static class OngoingFunctionPredicate<I, O> {
+        private final Function<I, O> f;
+        private OngoingFunctionPredicate(Function<I, O> f) {
+            this.f = f;
+        }
+        public Selector<I> output(final Predicate<? super O> valuePredicate) {
+            return new AbstractSelector<I>() {
+                public boolean matches(I i) {
+                    return i != null && valuePredicate.apply(f.apply(i));
+                }
+            };
+        }
+    }
 
     private Selectors() {}
 
@@ -89,5 +105,11 @@ public class Selectors {
         selectors.add(s1);
         selectors.add(s2);
         return nonOf(selectors);
+    }
+
+    /* Predicates related to functions */
+
+    public static <I, O> OngoingFunctionPredicate<I, O> when(Function<I, O> function) {
+        return new OngoingFunctionPredicate<I, O>(function);
     }
 }

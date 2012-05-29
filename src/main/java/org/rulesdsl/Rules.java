@@ -22,6 +22,7 @@ import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import org.rulesdsl.rules.*;
 
+import java.util.Arrays;
 import java.util.concurrent.Callable;
 
 /**
@@ -30,24 +31,42 @@ import java.util.concurrent.Callable;
 public class Rules {
 
     private Rules() {}
-    
-    public static <I, O> Rule<I, O> bind(Predicate<? super I> predicate, Supplier<? extends O> supplier) {
-        return new BasicRule<I, O>(predicate, supplier);
-    }
-    
-    public static <I, O> Rule<I, O> bind(Predicate<? super I> predicate, O value) {
-        return new BasicRule<I, O>(predicate, Suppliers.ofInstance(value));
-    }
-    
-    public static <I, O> Rule<I, O> bind(Predicate<? super I> predicate, Function<I, O> func) {
-        return new FuncRule<I, O>(predicate, func);
+
+    // TODO: check why type inference does not work
+    public static class OngoingRuleInitialization<I> {
+
+        private final Predicate<? super I> predicate;
+
+        private OngoingRuleInitialization(Predicate<? super I> predicate) {
+            this.predicate = predicate;
+        }
+
+        public <O> Rule<I, O> getFrom(Supplier<? extends O> supplier) {
+            return new BasicRule<I, O>(predicate, supplier);
+        }
+
+        public <O> Rule<I, O> just(O value) {
+            return new BasicRule<I, O>(predicate, Suppliers.ofInstance(value));
+        }
+
+        public <O> Rule<I, O> apply(Function<? super I, ? extends O> fn) {
+            return new FuncRule<I, O>(predicate, fn);
+        }
+
+        public <O> Rule<I, O> call(Callable<? extends O> callable) {
+            return new BasicRule<I, O>(predicate, Utils.asSupplier(callable));
+        }
+
+        public <O> Rule<I, O> callMemoized(Callable<? extends  O> callable) {
+            return new BasicRule<I, O>(predicate, Suppliers.memoize(Utils.asSupplier(callable)));
+        }
     }
 
-    public static <I, O> Rule<I, O> bind(Predicate<? super I> predicate, Callable<? extends O> callable) {
-        return new BasicRule<I, O>(predicate, Utils.asSupplier(callable));
+    public static <T> OngoingRuleInitialization<T> whenTrue(Predicate<? super T> predicate) {
+        return new OngoingRuleInitialization<T>(predicate);
     }
 
-    public static <I, O> Rule<I, O> bindMemoized(Predicate<? super I> selector, Callable<? extends O> callable) {
-        return new BasicRule<I, O>(selector, Suppliers.memoize(Utils.asSupplier(callable)));
+    public static <I, O> RuleSet<I, O> ruleSet(Rule<? super I, ? extends O>... rules) {
+        return new BasicRuleSet<I, O>(Arrays.asList(rules));
     }
 }

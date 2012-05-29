@@ -20,10 +20,11 @@ Here are simple examples. It's easy to understand how the library works:
 
     // Rules in rule set will be applied one-by-one until the first
     // one succeed.
-    RuleSet<String, String> mimeTypes = Rules.ruleSet(
-        bind(or(endsWith(".jpg"), endsWith(".jpeg")), "image/jpeg"),
-        bind(endsWith(".png"), "image/png"),
-        bind(endsWith(".gif"), "image/gif"),
+    RuleSet<String, String> rs = ruleSet(
+        whenTrue(or(endsWith(".jpg"), endsWith(".jpeg"))).just("image/jpeg"),
+        whenTrue(endsWith(".png")).just("image/png"),
+        whenTrue(endsWith(".gif")).just("image/gif"),
+        whenTrue(anything()).just("text/html")
     );
 
     assert(mimeTypes.apply("hello.png").equals("image/png"));
