@@ -1,5 +1,6 @@
 package org.rulesdsl;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import org.junit.Test;
 
@@ -10,7 +11,7 @@ import static com.google.common.base.Predicates.or;
 import static org.junit.Assert.assertEquals;
 import static org.rulesdsl.Rules.ruleSet;
 import static org.rulesdsl.Rules.whenTrue;
-import static org.rulesdsl.Selectors.anything;
+import static org.rulesdsl.Selectors.*;
 import static org.rulesdsl.StringSelectors.endsWith;
 
 /**
@@ -18,6 +19,12 @@ import static org.rulesdsl.StringSelectors.endsWith;
  * @author Roman Kashitsyn
  */
 public class RulesTest {
+
+    private static final Function<String, String> trim = new Function<String, String>() {
+        public String apply(String string) {
+            return string == null ? "" : string.trim();
+        }
+    };
 
     private static final Predicate<Integer> even = new Predicate<Integer>() {
         public boolean apply(Integer integer) {
@@ -27,10 +34,21 @@ public class RulesTest {
 
     @Test
     public void testOneRule() {
-        Rule<? super Integer, Integer> evenToZero = whenTrue(even).just(0);
+        Rule<Integer, Integer> evenToZero = whenTrue(even).just(0);
         assertEquals(Integer.valueOf(0), evenToZero.apply(2));
         assertEquals(Integer.valueOf(0), evenToZero.apply(4));
         assertEquals(Integer.valueOf(0), evenToZero.apply(null));
+    }
+
+    @Test
+    public void testHeterogeneousRuleSet() {
+        Rule<String, String> nullToEmpty = ruleSet(
+                whenTrue(isNull()).just(""),
+                whenTrue(anything(String.class)).apply(trim)
+        );
+
+        assertEquals("", nullToEmpty.apply(null));
+        assertEquals("hello", nullToEmpty.apply("   hello   "));
     }
 
     @Test

@@ -63,6 +63,11 @@ public class Selectors {
     public static Selector<Object> anything() {
         return StatelessSelectors.Anything;
     }
+
+    @SuppressWarnings("unchecked")
+    public static <T> Selector<T> anything(Class<T> clazz) {
+        return (Selector<T>) StatelessSelectors.Anything;
+    }
     
     public static Selector<Object> equalTo(Object o) {
         return new EqualToSelector(o);
@@ -105,6 +110,16 @@ public class Selectors {
         selectors.add(s1);
         selectors.add(s2);
         return nonOf(selectors);
+    }
+
+    /* Reflective predicates */
+
+    public static <T> Selector<T> anyInstanceOf(final Class<T> clazz) {
+        return new AbstractSelector<T>() {
+            public boolean matches(T t) {
+                return t != null && clazz.isAssignableFrom(t.getClass());
+            }
+        };
     }
 
     /* Predicates related to functions */

@@ -62,7 +62,7 @@ public class Rules {
         }
     }
 
-    public static <T> OngoingRuleInitialization<T> whenTrue(Predicate<? super T> predicate) {
+    public static <T> OngoingRuleInitialization<T> whenTrue(Predicate<T> predicate) {
         return new OngoingRuleInitialization<T>(predicate);
     }
 
