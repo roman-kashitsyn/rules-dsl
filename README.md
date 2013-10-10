@@ -25,7 +25,7 @@ Here are simple examples. It's easy to understand how the library works:
         when(endsWith(".png")).just("image/png"),
         when(endsWith(".gif")).just("image/gif"),
         when(resultOf(trim).is(empty)).<String>raise(IllegalArgumentException.class),
-        when(anything()).just("text/html"),
+        when(anything()).just("text/html")
     );
 
     assert(mimeTypes.apply("hello.png").equals("image/png"));
