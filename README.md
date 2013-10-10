@@ -21,10 +21,15 @@ Here are simple examples. It's easy to understand how the library works:
     // Rules in rule set will be applied one-by-one until the first
     // one succeed.
     RuleSet<String, String> rs = ruleSet(
-        whenTrue(or(endsWith(".jpg"), endsWith(".jpeg"))).just("image/jpeg"),
-        whenTrue(endsWith(".png")).just("image/png"),
-        whenTrue(endsWith(".gif")).just("image/gif"),
-        whenTrue(anything()).just("text/html")
+        when(or(endsWith(".jpg"), endsWith(".jpeg"))).just("image/jpeg"),
+        when(endsWith(".png")).just("image/png"),
+        when(endsWith(".gif")).just("image/gif"),
+        when(resultOf(trim).is(empty)).<String>raise(IllegalArgumentException.class),
+        when(anything()).just("text/html"),
     );
 
     assert(mimeTypes.apply("hello.png").equals("image/png"));
+    assert(mimeTypes.apply("index").equals("text/html");
+
+    // throws IllegalArgumentException
+    String oops = rs.apply(" ");

@@ -60,9 +60,13 @@ public class Rules {
         public <O> Rule<I, O> callMemoized(Callable<? extends  O> callable) {
             return new BasicRule<I, O>(predicate, Suppliers.memoize(Utils.asSupplier(callable)));
         }
+
+        public <O> Rule<I, O> raise(Class<? extends RuntimeException> class_) {
+            return new RaiseRule<I, O>(predicate, class_);
+        }
     }
 
-    public static <T> OngoingRuleInitialization<T> whenTrue(Predicate<T> predicate) {
+    public static <T> OngoingRuleInitialization<T> when(Predicate<T> predicate) {
         return new OngoingRuleInitialization<T>(predicate);
     }
 

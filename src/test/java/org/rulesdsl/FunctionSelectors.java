@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.rulesdsl.Selectors.equalTo;
-import static org.rulesdsl.Selectors.when;
+import static org.rulesdsl.Selectors.resultOf;
 
 /**
  * Tests for function selectors from {@link Selectors}.
@@ -24,7 +24,7 @@ public class FunctionSelectors {
 
     @Test
     public void checkSimpleFunctionSelector() {
-        Selector<Integer> have3InReminder = when(mod10).output(equalTo(3));
+        Selector<Integer> have3InReminder = resultOf(mod10).is(equalTo(3));
         assertTrue(have3InReminder.matches(3));
         assertTrue(have3InReminder.matches(13));
         assertFalse(have3InReminder.matches(5));

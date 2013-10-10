@@ -16,11 +16,13 @@
 
 package org.rulesdsl;
 
+import org.rulesdsl.predicates.AbstractSelector;
 import org.rulesdsl.predicates.strings.ContainsSubstringSelector;
 import org.rulesdsl.predicates.strings.EndsWithSelector;
 import org.rulesdsl.predicates.strings.MatchesPatternSelector;
 import org.rulesdsl.predicates.strings.StartsWithSelector;
 
+import javax.annotation.Nullable;
 import java.util.regex.Pattern;
 
 /**
@@ -29,7 +31,14 @@ import java.util.regex.Pattern;
 public class StringSelectors {
     
     private StringSelectors() {}
-    
+
+    public static final Selector<String> empty = new AbstractSelector<String>() {
+        @Override
+        public boolean matches(String s) {
+            return s == null || s.length() == 0;
+        }
+    };
+
     public static Selector<String> startsWith(String prefix) {
         return new StartsWithSelector(prefix);
     }

@@ -16,7 +16,10 @@
 
 package org.rulesdsl;
 
+
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import org.rulesdsl.predicates.*;
 
@@ -35,10 +38,21 @@ public class Selectors {
         private OngoingFunctionPredicate(Function<I, O> f) {
             this.f = f;
         }
-        public Selector<I> output(final Predicate<? super O> valuePredicate) {
+        public Selector<I> is(final Predicate<? super O> valuePredicate) {
+            Preconditions.checkNotNull(valuePredicate);
             return new AbstractSelector<I>() {
                 public boolean matches(I i) {
-                    return i != null && valuePredicate.apply(f.apply(i));
+                    return valuePredicate.apply(f.apply(i));
+                }
+            };
+        }
+
+        public Selector<I> is(final O value) {
+            return new AbstractSelector<I>() {
+                @Override
+                public boolean matches(I i) {
+                    final O result = f.apply(i);
+                    return Objects.equal(result, value);
                 }
             };
         }
@@ -124,7 +138,7 @@ public class Selectors {
 
     /* Predicates related to functions */
 
-    public static <I, O> OngoingFunctionPredicate<I, O> when(Function<I, O> function) {
+    public static <I, O> OngoingFunctionPredicate<I, O> resultOf(Function<I, O> function) {
         return new OngoingFunctionPredicate<I, O>(function);
     }
 }
