@@ -7,17 +7,21 @@ tight Guava library integration.
 Overiew
 -------
 
-*Rule* is a partial function in it's nature (so it implements the `Function`
-interface). It maps some input to a value or an action.
-Rules use *selectors* to deside whether they are applicable to an input or not.
-Selector is a predicate in it's nature (it implements the `Predicate` interface).
-*RuleSet* is just a rule that combines several other rules togather.
+*Rule* is just a partial function (so it implements the `Function`
+interface). It maps its input to a value or an action.
+
+Rules use *selectors* to decide whether they are applicable to an
+input or not.  Selector is just a predicate (so it implements the
+`Predicate` interface).
+
+*RuleSet* is just a rule that combines several other rules together.
 
 Example
 -------
 
 Here are simple examples. It's easy to understand how the library works:
 
+```java
     // Rules in rule set will be applied one-by-one until the first
     // one succeed.
     RuleSet<String, String> rs = ruleSet(
@@ -33,3 +37,4 @@ Here are simple examples. It's easy to understand how the library works:
 
     // throws IllegalArgumentException
     String oops = rs.apply(" ");
+```
